@@ -1,21 +1,40 @@
 package Objects;
 
+import Server.ChangesEvent;
 import Server.Message;
 
 import java.awt.*;
 
 public abstract class Drawable {
+    Color main_color_ = Color.white;
+    ChangesEvent related_event_;
+    Integer uniq_global_id_;
+    int animation_step_ = 15;
+    int animation_ = -40;
+    Double radius_ = 50.;
+    boolean is_dead_;
     Point position_;
 
-    Integer uniq_global_id;
-    boolean is_dead_;
-    int animation_ = -40;
-    int animation_step_ = 15;
-    Color main_color_ = Color.white;
-
-    Drawable(Point x, Integer uniq) {
+    Drawable(Point x, Integer uniq, ChangesEvent event) {
         position_ = new Point(x.x, x.y);
-        uniq_global_id = uniq;
+        uniq_global_id_ = uniq;
+        related_event_ = event;
+    }
+
+    public void ReloadAnimation() {
+        animation_step_ = 15;
+        animation_ = 0;
+    }
+
+    public boolean IsDead() {
+        if (is_dead_ || position_.x < -100. || position_.x > 2000.) {
+            return true;
+        }
+        return position_.y < -100. || position_.y > 1200.;
+    }
+
+    public Point GetPosition() {
+        return position_;
     }
 
     public Double Distance(Drawable to) {
@@ -27,31 +46,12 @@ public abstract class Drawable {
     }
 
     public Integer GetUniqId() {
-        return uniq_global_id;
+        return uniq_global_id_;
     }
+
+    public abstract Message PackToMessage(Integer additionalVar);
 
     public abstract void Draw(Graphics2D g2d, Point offset);
 
     public abstract void Tick();
-
-    public abstract Message PackToMessage(Integer additionalVar);
-
-    public Point GetPosition() {
-        return position_;
-    }
-
-    public boolean IsDead() {
-        if (is_dead_ == true) {
-            return true;
-        }
-        if (position_.x < -100. || position_.x > 2000.) {
-            return true;
-        }
-        return position_.y < -100. || position_.y > 1200.;
-    }
-
-    public  void ReloadAnimation(){
-        animation_ = -40;
-        animation_step_ = 15;
-    }
 }

@@ -2,8 +2,8 @@ package controller;
 
 import static java.lang.Math.min;
 
-public class LoadingScene    extends Scene {
-    double button_up_percent_ = 0;
+class LoadingScene extends Scene {
+    double start_button_move_percent_ = 0;
     Boolean is_shown = false;
 
     LoadingScene(Controller controller_) {
@@ -11,28 +11,29 @@ public class LoadingScene    extends Scene {
     }
 
     @Override
+    void Start() {
+        controller_.gui_.SetVisibleStartButton(true);
+        is_shown = true;
+    }
+
+    @Override
+    void Stop() {
+        controller_.gui_.SetVisibleStartButton(false);
+        is_shown = false;
+    }
+
+    @Override
     public void TickScene() {
-        if (!is_shown) {
-            is_shown = true;
-            Show();
-        }
         // button go up
-        button_up_percent_ += 3;
-        button_up_percent_ = min(button_up_percent_, 100);
-        if(button_up_percent_<100) {
-            controller_.gui_.SetStartButtonPosition(button_up_percent_);
-        }else{
+        if (!is_shown) {
+            Start();
+        }
+
+        start_button_move_percent_ = min(start_button_move_percent_ + 3, 100);
+        if (start_button_move_percent_ < 100) {
+            controller_.gui_.SetStartButtonPosition(start_button_move_percent_);
+        } else {
             controller_.gui_.OpenStartButton();
         }
-    }
-
-    @Override
-    public void Show() {
-        controller_.gui_.SetVisibleStartButton(true);
-    }
-
-    @Override
-    public void Hide() {
-        controller_.gui_.SetVisibleStartButton(false);
     }
 }

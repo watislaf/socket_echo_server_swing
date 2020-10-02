@@ -13,20 +13,26 @@ public class MyClient {
     AsynchronousSocketChannel client_;
     Controller controller_;
 
+    public MyClient(Controller controller) {
+        controller_ = controller;
+        try {
+            client_ = AsynchronousSocketChannel.open();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        client_.connect(new InetSocketAddress("localhost", 4999));
+    }
+
     public void Tick() {
         SendMessage(new Message(Message.ToDefaultString()));
     }
 
-    public void CreateUserConnection(Controller controller) throws IOException {
-        controller_ = controller;
-        client_ = AsynchronousSocketChannel.open();
-        client_.connect(new InetSocketAddress("localhost", 4999));
-    }
 
     public void SendMessage(Message message) {
-        ///////////////////////////// WRITE
-        byte[] byteMsg = message.toString().getBytes();
-        ByteBuffer buffer = ByteBuffer.wrap(byteMsg);
+        // WRITE
+        byte[] bytemsg = message.toString().getBytes();
+        ByteBuffer buffer = ByteBuffer.wrap(bytemsg);
+
         Future<Integer> writeResult;
         try { // Closed connection
             writeResult = client_.write(buffer);
@@ -41,9 +47,10 @@ public class MyClient {
             return;
         }
         buffer.flip();
-        ///////////////////////////// READ
-        byteMsg = Message.ToDefaultString().getBytes();
-        buffer = ByteBuffer.wrap(byteMsg);
+
+        //  READ
+        bytemsg = Message.ToDefaultString().getBytes();
+        buffer = ByteBuffer.wrap(bytemsg);
         Future<Integer> readResult = client_.read(buffer);
 
         try {
@@ -55,10 +62,8 @@ public class MyClient {
         ////////////////////////////// Move To controller unread
         String echo = new String(buffer.array()).trim();
         buffer.clear();
-
-        if (!Message.IsZero(echo)) {
-            controller_.AddNewMessage(new Message(echo));
+        if (Message.IsNotZero(echo)) {
+            controller_.AddNewUnreadMessage(new Message(echo));
         }
     }
-
 }

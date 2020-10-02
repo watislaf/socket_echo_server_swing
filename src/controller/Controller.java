@@ -10,59 +10,96 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Controller {
+    public enum Scenario {LoadingScreen, GameProcess;}
+
+    ArrayList<Message> unread_messages_from_server_ = new ArrayList<>();
+
+    Scenario current_scenario_ = Scenario.LoadingScreen;
+    LoadingScene loading_scene_;
+    GameScene game_scene_;
+    MyServer server_;
+    MyClient client_;
     GUI gui_;
-    Scenario scenario_;
-    ArrayList<Message> unreadMessages = new ArrayList<>();
-    LoadingScene loadingScene;
-    GameScene gameScene;
-    MyServer server;
-    MyClient my_client_;
-    int server_status_ = 404;
+
+    public Controller(GUI gui) {
+        loading_scene_ = new LoadingScene(this);
+        game_scene_ = new GameScene(this);
+        gui_ = gui;
+    }
+
+    public void InitializeConnection() {
+        server_ = new MyServer(this);
+        client_ = new MyClient(this);
+    }
 
     public void StartButtonClick() {
-        scenario_ = Scenario.GameProcess;
-        loadingScene.Hide();
-        gameScene.Show();
+        loading_scene_.Stop();
+        game_scene_.Start();
+    }
+
+    public void TickTheWorld() {
+        switch (current_scenario_) {
+            case LoadingScreen -> loading_scene_.TickScene();
+            case GameProcess -> game_scene_.TickScene();
+        }
+    }
+
+    public void KeyDown(char key_char) {
+        if (current_scenario_ == Scenario.GameProcess) {
+            game_scene_.KeyDown(key_char);
+        }
     }
 
     public ArrayList<Drawable> GetDrawable() {
-        switch (scenario_) {
-            case GameProcess:
-                return gameScene.GetDrawable();
+        if (current_scenario_ == Scenario.GameProcess) {
+            return game_scene_.GetDrawable();
         }
         return new ArrayList<>();
     }
 
-    public void KeyDown(char keyChar) {
-        switch (scenario_) {
-            case GameProcess:
-                gameScene.KeyDown(keyChar);
-        }
-    }
-
-    public void DrawServerStatus(Graphics2D g2d) {
-        if (server_status_ == 200) {
-            g2d.setColor(Color.ORANGE);
-        } else {
-            g2d.setColor(Color.RED);
-        }
-        g2d.fill(new Rectangle(0, 0, 10, 10));
+    public int GetServerStatus() {
+        if (server_ == null) return 404;
+        return server_.GetStatus();
     }
 
     public Scenario GetScenario() {
-        return scenario_;
+        return current_scenario_;
     }
 
-    public void AddNewMessage(Message message) {
-        unreadMessages.add(message);
+    public Integer GameGetShapesCount() {
+        return game_scene_.GetShapesCount();
     }
 
-    public Integer Random() {
+    public Point GetMainShapePosition() {
+        if (game_scene_.main_shape_setted_ == null) {
+            // out of plane position
+            return new Point(-1000, -1000);
+        }
+        Point main_shape_position = new Point(game_scene_.main_shape_setted_.GetPosition());
+        Point main_frame_offset = gui_.GetGlobalOffset();
+        main_shape_position.x -= main_frame_offset.x;
+        main_shape_position.y -= main_frame_offset.y;
+        return main_shape_position;
+    }
+
+    public void AddNewUnreadMessage(Message message) {
+        unread_messages_from_server_.add(message);
+    }
+
+    public int GetGameHelpMenuId() {
+        return game_scene_.GetHelpMenuId();
+    }
+
+    public Integer GameGetMaxShapes() {
+        return game_scene_.max_shapes_;
+    }
+
+    Integer GenerateNewId() {
         while (true) {
             double d = Math.random() * 10000;
             int x = ((int) d) % 10000;
             boolean valid = true;
-            for (Drawable obj : gameScene.shapes_around_) {
+            for (Drawable obj : game_scene_.shapes_around_) {
                 if (obj.GetUniqId() == x) {
                     valid = false;
                     System.out.println("random loose");
@@ -70,71 +107,6 @@ public class Controller {
             }
             if (valid)
                 return x;
-        }
-    }
-
-    public Integer GameGetShapesCount() {
-        return gameScene.GetShapesCount();
-    }
-
-    public Point GetMainShapePosition() {
-        if (gameScene.main_shape_setted_ == null) {
-            return new Point(-1000, -1000);
-        }
-        Point true_position = (Point) gameScene.main_shape_setted_.GetPosition().clone();
-        Point offset = gui_.GetGlobalOffset();
-        true_position.x -= offset.x;
-        true_position.y -= offset.y;
-        return true_position;
-
-    }
-
-    public int GameHelpMenu() {
-        return gameScene.GetHelpMenu();
-    }
-
-    public enum Scenario {
-        LoadingScreen,
-        GameProcess
-    }
-
-    public Controller(GUI gui) {
-        scenario_ = Scenario.LoadingScreen;
-        gui_ = gui;
-        loadingScene = new LoadingScene(this);
-        gameScene = new GameScene(this);
-    }
-
-    public int InitializeConnection() {
-        try {
-            server = new MyServer(this);
-            server.StartListen();
-        } catch (java.nio.channels.AcceptPendingException io) {
-            server_status_ = 200;
-            return 200;
-
-        } catch (Exception e) {
-            return 406;
-
-        } finally {
-            try {
-                my_client_ = new MyClient();
-                my_client_.CreateUserConnection(this);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
-        return 444;
-    }
-
-    public void TickTheWorld() {
-        switch (scenario_) {
-            case LoadingScreen:
-                loadingScene.TickScene();
-                break;
-            case GameProcess:
-                gameScene.TickScene();
-                break;
         }
     }
 }

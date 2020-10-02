@@ -6,40 +6,40 @@ import Server.Message;
 import java.awt.*;
 
 public class SmallCube extends Drawable {
-    Double radius = 20.;
-    Integer angular = 0;
+    Integer angle = 0;
 
     public SmallCube(Message message) {
-        super(new Point(message.getX(), message.getY()), message.getUniqId());
-        angular = message.getAdditionalVar();
+        super(new Point(message.GetX(), message.GetY()), message.GetUniqId(), ChangesEvent.smallCubeCreated);
+        angle = message.GetAdditionalVar();
+        radius_ = 20.;
     }
 
     public SmallCube() {
-        super(new Point(0, 0), 0);
+        super(new Point(0, 0), 0, ChangesEvent.smallCubeCreated);
     }
 
     @Override
     public Message PackToMessage(Integer additionalVar) {
-        return new Message(ChangesEvent.smallCubeCreated, position_.x, position_.y, angular, uniq_global_id);
+        return new Message(ChangesEvent.smallCubeCreated, position_.x, position_.y, angle, uniq_global_id_);
     }
 
     @Override
     public void Draw(Graphics2D g2d, Point offset) {
         g2d.setColor(main_color_);
-        Point offsetted_position = new Point(position_);
-        offsetted_position.x -= offset.x;
-        offsetted_position.y -= offset.y;
+        Point position = new Point(position_);
+        position.x -= offset.x;
+        position.y -= offset.y;
 
         int f = 4;
         for (int i = 0; i < f; i++) {
-            Double deg = (animation_ + i * 360 / f) * Math.PI / 180;
-            Integer c = (int) (Math.cos(deg) * radius);
-            Integer s = (int) (Math.sin(deg) * radius);
+            double deg = (animation_ + i * 360 / f) * Math.PI / 180;
+            int c = (int) (Math.cos(deg) * radius_);
+            int s = (int) (Math.sin(deg) * radius_);
 
             deg = deg = (animation_ + (i + 1) * 360 / f) * Math.PI / 180;
-            Integer c2 = (int) (Math.cos(deg) * (radius));
-            Integer s2 = (int) (Math.sin(deg) * (radius));
-            g2d.drawLine(offsetted_position.x + c, offsetted_position.y + s, offsetted_position.x + c2, offsetted_position.y + s2);
+            int c2 = (int) (Math.cos(deg) * (radius_));
+            int s2 = (int) (Math.sin(deg) * (radius_));
+            g2d.drawLine(position.x + c, position.y + s, position.x + c2, position.y + s2);
 
         }
 
@@ -48,8 +48,8 @@ public class SmallCube extends Drawable {
 
     @Override
     public void Tick() {
-        double x = 5 * Math.cos(angular * Math.PI / 180);
-        double y = 5 * Math.sin(angular * Math.PI / 180);
+        double x = 5 * Math.cos(angle * Math.PI / 180);
+        double y = 5 * Math.sin(angle * Math.PI / 180);
         position_.x += x;
         position_.y += y;
 

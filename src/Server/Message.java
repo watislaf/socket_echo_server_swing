@@ -7,104 +7,93 @@ import java.util.Collections;
 public class Message {
 
     static final int MAX_STRING_SIZE_ = 30;
-    String my_message;
-    ChangesEvent changesEvent_ = ChangesEvent.test;
-    Integer x_ = 0;
-    Integer y_ = 0;
-    Integer additional_var_ = 0;
-    Integer uniq_id_ = 0;
-    Integer privilage_ = 0;
+    ChangesEvent changesEvent_;
+    Integer additional_var_;
+    String my_message_;
+    Integer uniq_id_;
+    Integer privilege_ = 0;
+    Integer x_;
+    Integer y_;
 
     public Message(String message) {
-        my_message = message;
+        my_message_ = message;
         ArrayList<Integer> temp = ToData();
         changesEvent_ = ChangesEvent.valueOf(temp.get(0));
         x_ = temp.get(1);
         y_ = temp.get(2);
         additional_var_ = temp.get(3);
         uniq_id_ = temp.get(4);
-        privilage_ = temp.get(5);
+        privilege_ = temp.get(5);
     }
 
     public Message(ChangesEvent changesEvent, Integer x, Integer y, Integer additional_var, Integer uniq_id) {
+        additional_var_ = additional_var;
         changesEvent_ = changesEvent;
+        uniq_id_ = uniq_id;
         x_ = x;
         y_ = y;
-        additional_var_ = additional_var;
-        uniq_id_ = uniq_id;
-        my_message = toString();
+        my_message_ = toString();
     }
 
     public static String ToDefaultString() {
-        String x = new String("0#0#0#0#0#0");
-        if (x.length() < MAX_STRING_SIZE_) {
-            x = x.concat("#");
-            while (x.length() < MAX_STRING_SIZE_) {
-                x = x.concat("0");
-            }
+        String x = "0#0#0#0#0#0";
+        x = x.concat("#");
+        while (x.length() < MAX_STRING_SIZE_) {
+            x = x.concat("0");
         }
         return x;
     }
 
-    public static boolean IsZero(String echo) {
-        return echo.equals(ToDefaultString());
+    public static boolean IsNotZero(String echo) {
+        return !echo.equals(ToDefaultString());
     }
 
     public String toString() {
         String x = changesEvent_.getValue() + "#" +
                 x_.toString() + "#" + y_.toString() + "#" + additional_var_.toString() + "#"
-                + uniq_id_.toString() + "#" + privilage_.toString();
-        if (x.length() < MAX_STRING_SIZE_) {
-            x = x.concat("#");
-            while (x.length() < MAX_STRING_SIZE_) {
-                x = x.concat("0");
-            }
+                + uniq_id_.toString() + "#" + privilege_.toString();
+        x = x.concat("#");
+        while (x.length() < MAX_STRING_SIZE_) {
+            x = x.concat("0");
         }
         return x;
     }
 
     public ArrayList<Integer> ToData() {
-        String[] temp = my_message.split("#");
+        String[] temp = my_message_.split("#");
         ArrayList<Integer> data = new ArrayList<>();
         Collections.addAll(data,
                 Integer.parseInt(temp[0]), Integer.parseInt(temp[1]), // type x
                 Integer.parseInt(temp[2]), Integer.parseInt(temp[3]), //  x additional
-                Integer.parseInt(temp[4]), Integer.parseInt(temp[5])); // uniq privilage
+                Integer.parseInt(temp[4]), Integer.parseInt(temp[5])); // uniq eprivilage
         return data;
-
     }
 
-    public Integer getAdditionalVar() {
+    public Integer GetAdditionalVar() {
         return additional_var_;
     }
 
-    public Integer getPrivilage() {
-        return privilage_;
+    public Integer GetPrivilege() {
+        return privilege_;
     }
 
-    public ChangesEvent getEvent() {
+    public ChangesEvent GetEvent() {
         return changesEvent_;
     }
 
-    public Integer getX() {
+    public Integer GetX() {
         return x_;
     }
 
-    public Integer getY() {
+    public Integer GetY() {
         return y_;
     }
 
-
-    public void setPrivilage(Integer privilage) {
-        privilage_ = privilage;
-    }
-
-    public Integer getUniqId() {
+    public Integer GetUniqId() {
         return uniq_id_;
     }
 
-    public void setUniqId(Integer uniqId) {
-        uniq_id_ = uniqId;
+    public void SetPrivilege(Integer privilege) {
+        privilege_ = privilege;
     }
-
 }

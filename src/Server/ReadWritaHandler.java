@@ -8,31 +8,23 @@ import java.util.ArrayList;
 import java.util.Map;
 
 class ServerReadWrite implements CompletionHandler<Integer, Map<String, Object>> {
-    static int id = 0;
-    int personal_id;
+    ArrayList<Message> non_send_messages_ = new ArrayList<>();
     ArrayList<ServerReadWrite> room_;
-    ArrayList<Message> non_send_messages_= new ArrayList<>();;
-    int index_in_room_ = 0;
     AsynchronousSocketChannel client_;
+    int index_in_room_;
 
     public ServerReadWrite(AsynchronousSocketChannel client, ArrayList<ServerReadWrite> room) {
         client_ = client;
         room_ = room;
         room.add(this);
         index_in_room_ = room_.size();
-        personal_id = id;
-        id++;
     }
 
     @Override
-    public void completed(
-            Integer result, Map<String, Object> attachment) {
-
-        Map<String, Object> actionInfo = attachment;
+    public void completed(Integer result, Map<String, Object> attachment) {
         String action = (String) attachment.get("action");
-
         if ("read".equals(action)) {
-            ByteBuffer buffer = (ByteBuffer) actionInfo.get("buffer");
+            ByteBuffer buffer = (ByteBuffer) attachment.get("buffer");
             String string_from_client = new String(buffer.array()).trim();
             // If user left
             if (new String(buffer.array()).trim().equals("")) {
@@ -45,15 +37,15 @@ class ServerReadWrite implements CompletionHandler<Integer, Map<String, Object>>
             }
 
             buffer.flip();
-            actionInfo.put("action", "write");
-            actionInfo.put("buffer", buffer);
+            attachment.put("action", "write");
+            attachment.put("buffer", buffer);
 
-            if (!Message.IsZero(string_from_client)) {
+            if (Message.IsNotZero(string_from_client)) {
                 for (ServerReadWrite client_handler : room_) {
                     try {
                         // Some times here is an error if some one is left
                         client_handler.non_send_messages_.add(new Message(string_from_client));
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         System.out.println("Smth went wrong");
                     }
                 }
@@ -67,16 +59,17 @@ class ServerReadWrite implements CompletionHandler<Integer, Map<String, Object>>
                 byteMsg = Message.ToDefaultString().getBytes();
             }
             buffer = ByteBuffer.wrap(byteMsg);
-            client_.write(buffer, actionInfo, this);
+            client_.write(buffer, attachment, this);
 
             buffer.clear();
 
-        } else if ("write".equals(action)) {
+        }
+        if ("write".equals(action)) {
             // Give buffer back to user to write
             ByteBuffer buffer = ByteBuffer.allocate(32);
-            actionInfo.put("action", "read");
-            actionInfo.put("buffer", buffer);
-            client_.read(buffer, actionInfo, this);
+            attachment.put("action", "read");
+            attachment.put("buffer", buffer);
+            client_.read(buffer, attachment, this);
         }
     }
 

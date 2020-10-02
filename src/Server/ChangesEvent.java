@@ -14,7 +14,7 @@ public enum ChangesEvent {
     bigCubeRemoved(7),
     smallBallRemoved(8),
     smallCubeRemoved(9),
-    BoomCreated(10);
+    boomCreated(10);
 
     private final int value;
     private static Map map = new HashMap<>();
@@ -29,7 +29,7 @@ public enum ChangesEvent {
         return (ChangesEvent) map.get(pageType);
     }
 
-    private ChangesEvent(int value) {
+    ChangesEvent(int value) {
         this.value = value;
     }
 

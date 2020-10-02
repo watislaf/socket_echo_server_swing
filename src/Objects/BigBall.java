@@ -7,15 +7,14 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 public class BigBall extends Drawable {
-    Double radius = 50.;
 
     public BigBall(Message message) {
-        super(new Point(message.getX(), message.getY()), message.getUniqId());
+        super(new Point(message.GetX(), message.GetY()), message.GetUniqId(),ChangesEvent.bigBallCreated);
     }
 
     @Override
     public Message PackToMessage(Integer additionalVar) {
-        return new Message(ChangesEvent.bigBallCreated, position_.x, position_.y, 0, uniq_global_id);
+        return new Message(related_event_, position_.x, position_.y, 0, uniq_global_id_);
     }
 
     @Override
@@ -26,13 +25,13 @@ public class BigBall extends Drawable {
         offsetted_position.x -= offset.x;
         offsetted_position.y -= offset.y;
 
-        theCircle = new Ellipse2D.Double(offsetted_position.x - radius,
-                offsetted_position.y - radius, 2.0 * radius, 2.0 * radius);
+        theCircle = new Ellipse2D.Double(offsetted_position.x - radius_,
+                offsetted_position.y - radius_, 2.0 * radius_, 2.0 * radius_);
         g2d.draw(theCircle);
 
         for (int i = 1; i < 76; i += 30) {
-            theCircle = new Ellipse2D.Double(offsetted_position.x - radius * ((animation_ + i) % 100) / (100),
-                    offsetted_position.y - radius, 2.0 * radius * ((i + animation_) % 100) / (100), 2.0 * radius);
+            theCircle = new Ellipse2D.Double(offsetted_position.x - radius_ * ((animation_ + i) % 100) / (100),
+                    offsetted_position.y - radius_, 2.0 * radius_ * ((i + animation_) % 100) / (100), 2.0 * radius_);
             g2d.draw(theCircle);
         }
 

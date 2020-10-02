@@ -7,52 +7,51 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 public class BigCube extends Drawable {
-    Double radius = 50.;
 
     public BigCube(Message message) {
-        super(new Point(message.getX(), message.getY()), message.getUniqId());
+        super(new Point(message.GetX(), message.GetY()), message.GetUniqId(),ChangesEvent.bigCubeCreated);
     }
 
     @Override
     public Message PackToMessage(Integer additionalVar) {
-        return new Message(ChangesEvent.bigCubeCreated, position_.x, position_.y, 0, uniq_global_id);
+        return new Message(related_event_, position_.x, position_.y, 0, uniq_global_id_);
     }
 
     @Override
     public void Draw(Graphics2D g2d, Point offset) {
         g2d.setColor(main_color_);
         Shape theSquare;
-        Point true_position = new Point(position_);
-        true_position.x -= offset.x;
-        true_position.y -= offset.y;
-        theSquare = new Rectangle.Double(true_position.x - radius,
-                true_position.y - radius, 2.0 * radius, 2.0 * radius);
+        Point position = new Point(position_);
+        position.x -= offset.x;
+        position.y -= offset.y;
+        theSquare = new Rectangle.Double(position.x - radius_,
+                position.y - radius_, 2.0 * radius_, 2.0 * radius_);
         g2d.draw(theSquare);
 
         for (int i = -5; i < 20; i += 6) {
-            Integer animation = radius.intValue() * ((animation_ + i + 30) % 100) / 70;
-            g2d.drawLine(true_position.x - animation, true_position.y - radius.intValue(),
-                    true_position.x + radius.intValue(),
-                    true_position.y + radius.intValue());
+            Integer animation = radius_.intValue() * ((animation_ + i + 30) % 100) / 70;
+            g2d.drawLine(position.x - animation, position.y - radius_.intValue(),
+                    position.x + radius_.intValue(),
+                    position.y + radius_.intValue());
 
-            g2d.drawLine(true_position.x + animation, true_position.y + radius.intValue(),
-                    true_position.x - radius.intValue(),
-                    true_position.y - radius.intValue());
+            g2d.drawLine(position.x + animation, position.y + radius_.intValue(),
+                    position.x - radius_.intValue(),
+                    position.y - radius_.intValue());
 
-            g2d.drawLine(true_position.x + radius.intValue(), true_position.y - animation,
-                    true_position.x - radius.intValue(),
-                    true_position.y + radius.intValue());
+            g2d.drawLine(position.x + radius_.intValue(), position.y - animation,
+                    position.x - radius_.intValue(),
+                    position.y + radius_.intValue());
 
-            g2d.drawLine(true_position.x - radius.intValue(), true_position.y + animation,
-                    true_position.x + radius.intValue(),
-                    true_position.y - radius.intValue());
+            g2d.drawLine(position.x - radius_.intValue(), position.y + animation,
+                    position.x + radius_.intValue(),
+                    position.y - radius_.intValue());
 
         }
 
 
         g2d.setColor(Color.gray);
-        Shape theCircle = new Ellipse2D.Double(true_position.x - 100,
-                true_position.y - 100, 200, 200);
+        Shape theCircle = new Ellipse2D.Double(position.x - 100,
+                position.y - 100, 200, 200);
         g2d.draw(theCircle);
     }
 

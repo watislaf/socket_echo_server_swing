@@ -6,8 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 class GuiActionListener implements ActionListener {
-    private GUI gui_;
-    private Controller controller_;
+    private final Controller controller_;
+    private final GUI gui_;
 
     public GuiActionListener(GUI gui) {
         gui_ = gui;
@@ -20,10 +20,9 @@ class GuiActionListener implements ActionListener {
             controller_.TickTheWorld();
         }
 
-        if (e.getSource() == gui_.GetStartButton()) {
+           if (e.getSource() == gui_.GetStartButton()) {
             controller_.StartButtonClick();
         }
         gui_.Repaint();
     }
-
 }

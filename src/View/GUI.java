@@ -17,33 +17,24 @@ public class GUI {
     private JButton start_button_;
     private MyPanel start_panel_;
 
-    private JFrame frame_;
-    private Timer main_timer_;
     final Point WINDOW_SIZE_ = new Point(600, 400);
     Integer start_start_degree_ = 10;
 
-    public Point GetCenter() {
-        return new Point(frame_.getSize().width / 2, frame_.getSize().height / 2 - 20);
-    }
+    private JFrame frame_;
+    private Timer main_timer_;
 
-    public Point GetGlobalOffset() {
-        return frame_.getLocation();
-    }
 
     class MyPanel extends JPanel {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setColor(Color.white);
-            if (controller_.GetScenario() == Controller.Scenario.GameProcess) {
-                DrawScore(g2d);
-            }
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             if (controller_.GetScenario() == Controller.Scenario.GameProcess) {
-                int help_menu = controller_.GameHelpMenu();
+                DrawScore(g2d);
+
+                int help_menu = controller_.GetGameHelpMenuId();
                 if (help_menu == 1) {
                     DrawHelpCercle(g2d);
                 }
@@ -51,13 +42,23 @@ public class GUI {
                     DrawHelpW(g2d);
                 }
             }
+
             ArrayList<Drawable> drawable = controller_.GetDrawable();
             for (Drawable elem : drawable) {
                 elem.Draw(g2d, GetGlobalOffset());
             }
-            controller_.DrawServerStatus(g2d);
+            DrawServerStatus(g2d);
             DrawPayLoad(g2d);
 
+        }
+
+        public void DrawServerStatus(Graphics2D g2d) {
+            if (controller_.GetServerStatus() == 200) {
+                g2d.setColor(Color.ORANGE);
+            } else {
+                g2d.setColor(Color.RED);
+            }
+            g2d.fill(new Rectangle(0, 0, 10, 10));
         }
 
         private void DrawPayLoad(Graphics2D g2d) {
@@ -108,10 +109,18 @@ public class GUI {
         g2d.drawString("D", help_center.x, help_center.y);
     }
 
+    public Point GetCenter() {
+        return new Point(frame_.getSize().width / 2, frame_.getSize().height / 2 - 20);
+    }
+
+    public Point GetGlobalOffset() {
+        return frame_.getLocation();
+    }
+
     private void DrawScore(Graphics2D g2d) {
         Integer points = controller_.GameGetShapesCount();
         g2d.setColor(Color.ORANGE);
-        if (points == 0 || points == 10) {
+        if (points == 0 || points.equals(controller_.GameGetMaxShapes())) {
             g2d.setColor(Color.RED);
         }
         g2d.drawString(points.toString(), 30, 10);
@@ -126,7 +135,6 @@ public class GUI {
     }
 
     private void InitializeButtons() {
-        // Buton
         start_button_ = new JButton("Start");
         int buttonWidth = 150;
         int buttonHeight = 100;
@@ -138,7 +146,6 @@ public class GUI {
         start_button_.setForeground(Color.white);
         start_button_.setVisible(false);
         start_panel_.add(start_button_);
-
     }
 
     private void InitializeTimer(int interval) {
@@ -175,18 +182,15 @@ public class GUI {
                     null,
                     options,
                     options[2]);
-            /// Exequte friends
-
         }
         if (n == 0) {
             String OS = System.getProperty("os.name").toLowerCase();
             if (OS.contains("win")) {
-                //     Windows
+                // Windows
                 return;
             }
             System.out.println(OS);
             if (OS.contains("nix") || OS.contains("nux")) {
-//                Linux
                 try {
                     String[] commands = {"bash", "-c", "java -jar socket_echo_server_swing.jar &"};
                     Runtime r = Runtime.getRuntime();
@@ -233,37 +237,29 @@ public class GUI {
     public void SetStartButtonPosition(Double button_up_percent_) {
         int buttonWidth = 20;
         int buttonHeight = 20;
-        Double y_position = (WINDOW_SIZE_.y - buttonHeight) * button_up_percent_ / 200.;
+        double y_position = (WINDOW_SIZE_.y - buttonHeight) * button_up_percent_ / 200.;
         start_button_.setBounds(
-                new Rectangle((WINDOW_SIZE_.x - buttonWidth) / 2, y_position.intValue()
+                new Rectangle((WINDOW_SIZE_.x - buttonWidth) / 2, (int) y_position
                         , 20, 20));
 
-
-    }
-
-    public void Repaint() {
-        // start_button_.repaint();
-        //      start_button_.revalidate();
-        //start_panel_.repaint();
-        //
-        //         frame_.revalidate();
-        //start_panel_.updateUI();
-        frame_.repaint();
-        //  start_panel_.paintComponents(g);
 
     }
 
     public void OpenStartButton() {
         int buttonWidth = 150;
         int buttonHeight = 100;
-        Double y_position = (WINDOW_SIZE_.y - buttonHeight * 1.5) * 100 / 200.;
+        double y_position = (WINDOW_SIZE_.y - buttonHeight * 1.5) * 100 / 200.;
         start_button_.setBounds(
-                new Rectangle((WINDOW_SIZE_.x - buttonWidth) / 2, y_position.intValue()
+                new Rectangle((WINDOW_SIZE_.x - buttonWidth) / 2, (int) y_position
                         , buttonWidth, buttonHeight));
     }
 
     public void SetBackGroundColorPercent(int color_percent) {
         int channel = 255 * color_percent / 100;
         start_panel_.setBackground(new Color(channel, channel, channel));
+    }
+
+    public void Repaint() {
+        frame_.repaint();
     }
 }

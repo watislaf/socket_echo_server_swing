@@ -2,7 +2,6 @@ package Server;
 
 import controller.Controller;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
@@ -11,22 +10,32 @@ import java.nio.channels.CompletionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 
 public class MyServer {
+    int server_status_ = 404;
     Controller controller_;
     AsynchronousServerSocketChannel serverChannel;
     ArrayList<ServerReadWrite> room = new ArrayList<>();
 
-    public MyServer(Controller controller) throws IOException, ExecutionException, InterruptedException {
+    public MyServer(Controller controller) {
         controller_ = controller;
-        serverChannel = AsynchronousServerSocketChannel.open();
-        InetSocketAddress hostAddress = new InetSocketAddress("localhost", 4999);
-        serverChannel.bind(hostAddress);
+        try {
+            serverChannel = AsynchronousServerSocketChannel.open();
+            InetSocketAddress hostAddress = new InetSocketAddress("localhost", 4999);
+            serverChannel.bind(hostAddress);
+            StartListen();
+        } catch (java.nio.channels.AcceptPendingException io) {
+            server_status_ = 200;
+        } catch (Exception ignored) {
+        }
     }
 
-    public void StartListen() {
+    public int GetStatus() {
+        return server_status_;
+    }
+
+    void StartListen() {
         while (true) {
             serverChannel.accept(null, new
                     CompletionHandler<AsynchronousSocketChannel, Object>() {
@@ -43,7 +52,6 @@ public class MyServer {
                                 Map<String, Object> readInfo = new HashMap<>();
                                 readInfo.put("action", "read");
                                 readInfo.put("buffer", buffer);
-
                                 client.read(buffer, readInfo, handler);
                             }
                         }
@@ -51,9 +59,8 @@ public class MyServer {
                         @Override
                         public void failed(Throwable exc, Object attachment) {
                         }
-                    });
+                    }
+            );
         }
-
     }
-
 }
