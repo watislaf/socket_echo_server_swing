@@ -4,7 +4,7 @@
 
 To run .jar file, you need to have java or jdk installed (**IntelliJ** jdk is ok).
 
-####**IntelliJ**
+#### **IntelliJ**
 ~~~
 $ java 
 ~~~
@@ -16,7 +16,7 @@ If there is no java in PATH, you should add it on your own:
 ``` 
 In my way, the **example** was empty because  .jdks lay in home dir.
  
-####No **IntelliJ**
+#### No **IntelliJ**
 [Download Java via apt](https://opensource.com/article/19/11/install-java-linux)  
 Type to check 
 ~~~
