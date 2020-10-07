@@ -39,8 +39,13 @@ public class Controller {
 
     public void TickTheWorld() {
         switch (current_scenario_) {
-            case LoadingScreen -> loading_scene_.TickScene();
-            case GameProcess -> game_scene_.TickScene();
+            case LoadingScreen: {
+                loading_scene_.TickScene();
+                break;
+            }
+            case GameProcess: {
+                game_scene_.TickScene();
+            }
         }
     }
 

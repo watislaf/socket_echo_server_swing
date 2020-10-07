@@ -186,7 +186,12 @@ public class GUI {
         if (n == 0) {
             String OS = System.getProperty("os.name").toLowerCase();
             if (OS.contains("win")) {
-                // Windows
+                try {
+                    // Execute command
+                    String command = "cmd /c java -jar socket_echo_server_swing.jar ";
+                    Process child = Runtime.getRuntime().exec(command);
+
+                }catch (Exception ignore){}
                 return;
             }
             System.out.println(OS);

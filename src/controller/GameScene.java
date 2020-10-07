@@ -25,7 +25,7 @@ class GameScene extends Scene {
     Backpack<SmallBall> balls_ = new Backpack<>(max_shapes_);
 
     @Override
-      void Start() {
+    void Start() {
         controller_.InitializeConnection();
 
         my_uniq_window_id_ = controller_.GenerateNewId();
@@ -62,8 +62,11 @@ class GameScene extends Scene {
         Point center_position = main_shape_setted_.GetPosition();
         int fly_angle = 0;
         switch (keyChar) {
-            case 'w' -> CatchTheSmall();
-            case 'd' -> {
+            case 'w': {
+                CatchTheSmall();
+                break;
+            }
+            case 'd': {
                 Message main_shape_destroy;
                 if (is_cube) {
                     main_shape_destroy = new Message(ChangesEvent.bigCubeRemoved, 0, 0, 0, main_shape_setted_.GetUniqId());
@@ -79,11 +82,26 @@ class GameScene extends Scene {
 
         if (CanCreateTheSmall() && "serfcx".contains("" + keyChar)) {
             switch (keyChar) {
-                case 'c' -> fly_angle = 60;
-                case 'x' -> fly_angle = 120;
-                case 's' -> fly_angle = 180;
-                case 'e' -> fly_angle = 240;
-                case 'r' -> fly_angle = 300;
+                case 'c': {
+                    fly_angle = 60;
+                    break;
+                }
+                case 'x': {
+                    fly_angle = 120;
+                    break;
+                }
+                case 's': {
+                    fly_angle = 180;
+                    break;
+                }
+                case 'e': {
+                    fly_angle = 240;
+                    break;
+                }
+                case 'r': {
+                    fly_angle = 300;
+                    break;
+                }
             }
             RemoveOneFromBackPack();
             ChangesEvent create;
@@ -226,11 +244,28 @@ class GameScene extends Scene {
                 continue;
             }
             switch (message.GetEvent()) {
-                case bigBallRemoved, bigCubeRemoved, smallBallRemoved, smallCubeRemoved -> RemoveObject(message);
-                case smallCubeCreated, smallBallCreated -> CreateSmall(message);
-                case bigCubeCreated, bigBallCreated -> CreateBig(message);
-                case boomCreated -> shapes_around_.add(new Boom(message));
-                case newUserHello -> {
+                case bigBallRemoved:
+                case bigCubeRemoved:
+                case smallBallRemoved:
+                case smallCubeRemoved: {
+                    RemoveObject(message);
+                    break;
+                }
+                case smallCubeCreated:
+                case smallBallCreated: {
+                    CreateSmall(message);
+                    break;
+                }
+                case bigCubeCreated:
+                case bigBallCreated: {
+                    CreateBig(message);
+                    break;
+                }
+                case boomCreated: {
+                    shapes_around_.add(new Boom(message));
+                    break;
+                }
+                case newUserHello: {
                     CreateFlash();
                     if (controller_.server_.GetStatus() == 200) {
                         SceneTransferToOtherClient(message);
