@@ -23,6 +23,9 @@ public class GUI {
     private JFrame frame_;
     private Timer main_timer_;
 
+    int buttonWidth;
+    int buttonHeight;
+    double button_up_percent_ = 0;
 
     class MyPanel extends JPanel {
         @Override
@@ -191,7 +194,8 @@ public class GUI {
                     String command = "cmd /c java -jar socket_echo_server_swing.jar ";
                     Process child = Runtime.getRuntime().exec(command);
 
-                }catch (Exception ignore){}
+                } catch (Exception ignore) {
+                }
                 return;
             }
             System.out.println(OS);
@@ -239,9 +243,10 @@ public class GUI {
         start_button_.setVisible(b);
     }
 
-    public void SetStartButtonPosition(Double button_up_percent_) {
-        int buttonWidth = 20;
-        int buttonHeight = 20;
+    public void SetStartButtonPosition(Double button_up_percent) {
+        buttonWidth = 20;
+        buttonHeight = 20;
+        button_up_percent_ = button_up_percent;
         double y_position = (WINDOW_SIZE_.y - buttonHeight) * button_up_percent_ / 200.;
         start_button_.setBounds(
                 new Rectangle((WINDOW_SIZE_.x - buttonWidth) / 2, (int) y_position
@@ -251,8 +256,8 @@ public class GUI {
     }
 
     public void OpenStartButton() {
-        int buttonWidth = 150;
-        int buttonHeight = 100;
+        buttonWidth = 150;
+        buttonHeight = 100;
         double y_position = (WINDOW_SIZE_.y - buttonHeight * 1.5) * 100 / 200.;
         start_button_.setBounds(
                 new Rectangle((WINDOW_SIZE_.x - buttonWidth) / 2, (int) y_position
@@ -265,6 +270,12 @@ public class GUI {
     }
 
     public void Repaint() {
+        WINDOW_SIZE_.x = frame_.getSize().width;
+        WINDOW_SIZE_.y = frame_.getSize().height;
+        double y_position = (WINDOW_SIZE_.y - buttonHeight*1.5) * button_up_percent_ / 200.;
+        start_button_.setBounds(
+                new Rectangle((WINDOW_SIZE_.x - buttonWidth) / 2, (int) y_position
+                        , buttonWidth,buttonHeight));
         frame_.repaint();
     }
 }
