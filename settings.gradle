@@ -1,0 +1,3 @@
+rootProject.name = 'echo_socket_swing'
+
+include 'main_project'
