@@ -3,11 +3,11 @@
 Opened windows are connecting via socket.
 ![image](https://user-images.githubusercontent.com/45079123/95383198-7bade080-08f3-11eb-8e83-0041631295c4.png)
 
-The window with yellow square at the left-top -- is the *server* window . 
+The window with yellow small square at the left-top -- is the *server* window . 
 
 ![image](https://user-images.githubusercontent.com/45079123/95383475-e6f7b280-08f3-11eb-9ca5-a403616f2016.png)
 
-When the connection is established, each window now can create objects on the global plane. Throw and cathc balls and cubes with '*serfcxdw*' keys.
+When the connection is established, each window now can create objects on the global plane. Throw balls and cubes with '*serfcxdw*' keys and see everybody else on the plane. Each window has its own objects that are colored yellow and can see other objects of other windows colored white.
 
 ### Fast Bash deploy 
 
